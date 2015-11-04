@@ -1,80 +1,399 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://developer.oneboxtickets.com/dynamic-pricing-api/index.html
 
 # onebox-dynamic-pricing-api
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+API to share CRM data to our integrated clients.
 
-## Questions Collection [/questions]
+To do so, we have used a **API Blueprint** standard, **apiary** as an online editing and mocking tool, **aglio** to document it and **getsandbox** as a sandbox provider:
++ [API Blueprint](https://apiblueprint.org/)
++ [apiary.io](http://docs.oneboxdynamicpricingapi.apiary.io/)
++ [getsandbox.com](http://onebox-dynamic-pricing-api.getsandbox.com/)
++ [aglio](https://github.com/danielgtaylor/aglio)
++ [github](https://github.com/joliva-ob/onebox-dynamic-pricing-api)
++ [onebox-developer](http://developer.oneboxtickets.com/dynamic-pricing-api/)
 
-### List All Questions [GET]
+## OAuth Requests [/oauth/token]
 
-+ Response 200 (application/json)
+### Request Access Token [POST]
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+You will need to use OAuth to access the API.  Write to us at api-support@oneboxtm.com.  We will give you a client ID and client secret. Use this as shown in the following call in order to retrieve a token.
+Once you have a token you can use it in all API calls as shown below.
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
+            "grant_type": "password",
+            "client_id": [CLIENT_ID],
+            "client_secret": [CLIENT_SECRET],
+            "password": [YOURPASSWORD],
+            "username": [YOURUSERNAME]
         }
 
-+ Response 201 (application/json)
++ Response 201
 
-    + Headers
+        {
+            "access_token": "[TOKEN]",
+            "token_type":"bearer",
+            "expires_in":7200,
+            "refresh_token": "[REFRESH_TOKEN]"
+        }
 
-            Location: /questions/2
+## Sales Collection [/dynamic-pricing-api/1.0/sales{?start_date,end_date,page}]
+List all the key data from the purchases. It is also allowed filtering between dates and paging.
 
-    + Body
+See below the description of the response fields we consider that need to be explained:
+
+| Response Field                   | Description                             |
+|----------------------------------|-----------------------------------------|
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
+
+### List All Sales [GET]
+
++ Request
+
+  + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
++ Parameters
+    + start_date (optional, date) ... Filter by starting date (`2015-08-05T08:40:51.620Z`)
+    + end_date (optional, date) ... Filter by final date
+    + page (optional, number) ... Paginate response to the given page number
+
++ Response 200 (application/json)
+
+        {
+          "collection":
+          {
+            "version": "1.0",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/sales",
+            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
+            "request_date": "2015-08-05T08:40:51.620Z",
+            "channel_id": "int_channel@oneboxtm.com",
+            "parameters":
+            {
+              "start_date": "",
+              "end_date": "",
+              "page": 2
+            },
+            "sales": [
+              {
+                "id": "JFSKF34K2K4",
+                "transactin_date": "2015-08-05T08:40:51.620Z",
+                "transaction_type": "SALE",
+                "buyer_type_code": "INTEGRATION",
+                "products_number": 2,
+                "channel":
+                {
+                  "channel_id": "int_channel@oneboxtm.com",
+                  "city": "Barcelona",
+                  "zipCode": "08003"
+                },
+                "products": [
+                  {
+                      "id": "432k23",
+                      "event_id": "432",
+                      "event_date": "2015-08-05",
+                      "event_name": "Campeonato liga LFP 15-16"
+                      "session_id": "12",
+                      "session_date": "2015-08-05T08:40:51.620Z",
+                      "session_name": "Liga Barcelona - Madrid",
+                      "venue_id": "2",
+                      "venue_name": "Camp Nou",
+                      "price_id": "21",
+                      "price_zone_id": "454",
+                      "price": 23.3,
+                      "section": "tribuna alta B",
+                      "seat": "10",
+                      "row": "8"
+                  },
+                  {
+                      "id": "432k24",
+                      "event_id": "432",
+                      "event_date": "2015-08-05",
+                      "event_name": "Campeonato liga LFP 15-16"
+                      "session_id": "12",
+                      "session_date": "2015-08-05T08:40:51.620Z",
+                      "session_name": "Liga Barcelona - Madrid",
+                      "venue_id": "2",
+                      "venue_name": "Camp Nou",
+                      "price_id": "22",
+                      "price_zone_id": "454",
+                      "price": 50.0,
+                      "section": "tribuna alta B",
+                      "seat": "10",
+                      "row": "7"
+                  }
+                ]
+              }
+            ],
+            "links": [
+              {
+                "name": "next_page",
+                "prompt": "Next",
+                "rel": "next",
+                "href": "sales/page/3",
+                "render": "link"
+              },
+              {
+                "name": "previous_page",
+                "prompt": "Bext",
+                "rel": "back",
+                "href": "sales/page/1",
+                "render": "link"
+              }
+            ]
+
+          }
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+## Prices Collection [/dynamic-pricing-api/1.0/prices{?start_date,end_date,page}]
+List all the key data from the prices. It is also allowed to filtering between dates and paging and by a given price id.
+
+See below the description of the response fields we consider that need to be explained:
+
+| Response Field                   | Description                             |
+|----------------------------------|-----------------------------------------|
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
+
+### List All Prices [GET]
+
++ Request
+
+  + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
++ Parameters
+
+    + start_date (optional, date) ... Filter by starting date (`2015-08-05T08:40:51.620Z`)
+    + end_date (optional, date) ... Filter by final date
+    + page (optional, number) ... Paginate response to the given page number
+
++ Response 200 (application/json)
+
+        {
+          "collection":
+          {
+            "version": "1.0",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/prices",
+            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
+            "request_date": "2015-08-05T08:40:51.620Z",
+            "channel_id": "int_channel@oneboxtm.com",
+            "parameters":
+            {
+              "id": "",
+              "start_date": "",
+              "end_date": "",
+              "page": 2
+            },
+            "prices": [
+              {
+                "id": "44",
+                "price": 23.3,
+                "price_zone_id": "454",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "session_id": "12",
+                "session_date": "2015-08-05T08:40:51.620Z",
+                "venue_id": "2",
+                "buyer_type_code": "INTEGRATION",
+                "fee": 2.0,
+                "tax": 21.0,
+                "external_price_id": ""
+              },
+              {
+                "id": "322",
+                "price": 50.0,
+                "price_zone_id": "455",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "session_id": "12",
+                "session_date": "2015-08-05T08:40:51.620Z",
+                "venue_id": "2",
+                "buyer_type_code": "INTEGRATION",
+                "fee": 2.0,
+                "tax": 21.0,
+                "external_price_id": ""
+              }
+            ],
+            "links": [
+              {
+                "name": "next_page",
+                "prompt": "Next",
+                "rel": "next",
+                "href": "prices/page/3",
+                "render": "link"
+              },
+              {
+                "name": "previous_page",
+                "prompt": "Bext",
+                "rel": "back",
+                "href": "prices/page/1",
+                "render": "link"
+              }
+            ]
+
+          }
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+## Price Operations [/dynamic-pricing-api/1.0/prices/{id}]
+Modification (PUT) and partial modification  (PATCH) are both of them allowed. Notice that PUT is the correct and safe way to perform the modification as PATCH is neither safe nor idempotent.
+
+See below the description of the response fields we consider that need to be explained:
+
+| Response Field                   | Description                             |
+|----------------------------------|-----------------------------------------|
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
+
+### Partial modification of a Price [PATCH]
+
++ Parameters
+
+    + id (required, string) ... Update a given price id
+
++ Request
+
+      + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
+      + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+              "id": "44",
+              "price": 23.3
             }
+
++ Response 200 (application/json)
+
+        {
+          "id": "44",
+          "price": 23.3,
+          "price_zone_id": "454",
+          "event_id": "432",
+          "event_date": "2015-08-05",
+          "session_id": "12",
+          "session_date": "2015-08-05T08:40:51.620Z",
+          "venue_id": "2",
+          "buyer_type_code": "INTEGRATION",
+          "fee": 2.0,
+          "tax": 21.0,
+          "external_price_id": ""
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+### Upate the whole Price [PUT]
+
++ Parameters
+
+    + id (required, string) ... Update a given price id
+
++ Request
+
+      + Headers
+
+                Authorization: Bearer [OAUTH2_TOKEN]
+                Accept: application/vnd.collection+json
+
+      + Body
+
+            {
+              "id": "44",
+              "price": 23.3,
+              "price_zone_id": "454",
+              "event_id": "432",
+              "event_date": "2015-08-05",
+              "session_id": "12",
+              "session_date": "2015-08-05T08:40:51.620Z",
+              "venue_id": "2",
+              "buyer_type_code": "INTEGRATION",
+              "fee": 2.0,
+              "tax": 21.0,
+              "external_price_id": ""
+            }
+
++ Response 200 (application/json)
+
+        {
+          "id": "44",
+          "price": 23.3,
+          "price_zone_id": "454",
+          "event_id": "432",
+          "event_date": "2015-08-05",
+          "session_id": "12",
+          "session_date": "2015-08-05T08:40:51.620Z",
+          "venue_id": "2",
+          "buyer_type_code": "INTEGRATION",
+          "fee": 2.0,
+          "tax": 21.0,
+          "external_price_id": ""
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
