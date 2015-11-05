@@ -13,9 +13,9 @@ To do so, we have used a **API Blueprint** standard, **apiary** as an online edi
 + [github](https://github.com/joliva-ob/onebox-dynamic-pricing-api)
 + [onebox-developer](http://developer.oneboxtickets.com/dynamic-pricing-api/)
 
-## OAuth Requests [/oauth/token]
+## OAuth2 Requests [/oauth/token]
 
-### Request Access Token [POST]
+### Oauth2 Request Access Token [POST]
 
 You will need to use OAuth to access the API.  Write to us at api-support@oneboxtm.com.  We will give you a client ID and client secret. Use this as shown in the following call in order to retrieve a token.
 Once you have a token you can use it in all API calls as shown below.
@@ -52,6 +52,8 @@ See below the description of the response fields we consider that need to be exp
 | parameters                       | (Object) Request filtering used         |
 
 ### List All Sales [GET]
+
+Collection of sales, where each sale can have got several different products (ticket items).
 
 + Request
 
@@ -142,7 +144,7 @@ See below the description of the response fields we consider that need to be exp
               },
               {
                 "name": "previous_page",
-                "prompt": "Bext",
+                "prompt": "Back",
                 "rel": "back",
                 "href": "sales/page/1",
                 "render": "link"
@@ -220,6 +222,7 @@ See below the description of the response fields we consider that need to be exp
                 "session_id": "12",
                 "session_date": "2015-08-05T08:40:51.620Z",
                 "venue_id": "2",
+                "venue_name": "FCB Camp Nou",
                 "buyer_type_code": "INTEGRATION",
                 "fee": 2.0,
                 "tax": 21.0,
@@ -233,6 +236,7 @@ See below the description of the response fields we consider that need to be exp
                 "event_date": "2015-08-05",
                 "session_id": "12",
                 "session_date": "2015-08-05T08:40:51.620Z",
+                "venue_name": "FCB Camp Nou",
                 "venue_id": "2",
                 "buyer_type_code": "INTEGRATION",
                 "fee": 2.0,
@@ -250,7 +254,7 @@ See below the description of the response fields we consider that need to be exp
               },
               {
                 "name": "previous_page",
-                "prompt": "Bext",
+                "prompt": "Back",
                 "rel": "back",
                 "href": "prices/page/1",
                 "render": "link"
@@ -369,31 +373,31 @@ See below the description of the response fields we consider that need to be exp
 
 + Response 200 (application/json)
 
-        {
-          "id": "44",
-          "price": 23.3,
-          "price_zone_id": "454",
-          "event_id": "432",
-          "event_date": "2015-08-05",
-          "session_id": "12",
-          "session_date": "2015-08-05T08:40:51.620Z",
-          "venue_id": "2",
-          "buyer_type_code": "INTEGRATION",
-          "fee": 2.0,
-          "tax": 21.0,
-          "external_price_id": ""
-        }
+          {
+            "id": "44",
+            "price": 23.3,
+            "price_zone_id": "454",
+            "event_id": "432",
+            "event_date": "2015-08-05",
+            "session_id": "12",
+            "session_date": "2015-08-05T08:40:51.620Z",
+            "venue_id": "2",
+            "buyer_type_code": "INTEGRATION",
+            "fee": 2.0,
+            "tax": 21.0,
+            "external_price_id": ""
+          }
 
 + Response 400 (application/json)
 
-        {
-          "error": "Bad request",
-          "error_description": "There was a syntax error, check your params request and try it again."
-        }
+          {
+            "error": "Bad request",
+            "error_description": "There was a syntax error, check your params request and try it again."
+          }
 
 + Response 401 (application/json)
 
-        {
-          "error": "unauthorized",
-          "error_description": "Full authentication is required to access this resource"
-        }
+          {
+            "error": "unauthorized",
+            "error_description": "Full authentication is required to access this resource"
+          }
