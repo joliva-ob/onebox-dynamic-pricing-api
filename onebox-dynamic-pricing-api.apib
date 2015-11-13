@@ -39,8 +39,22 @@ Once you have a token you can use it in all API calls as shown below.
             "refresh_token": "[REFRESH_TOKEN]"
         }
 
-## Sales Collection [/dynamic-pricing-api/1.0/sales{?start_date,end_date,page}]
-List all the key data from the purchases. It is also allowed filtering between dates and paging.
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+## Sales Collection [/dynamic-pricing-api/1.0/sales{?event_id,start_date,end_date,page}]
+List all the key data from the sales. It is also allowed filtering between dates and paging.
 
 See below the description of the response fields we consider that need to be explained:
 
@@ -63,7 +77,8 @@ Collection of sales, where each sale can have got several different products (ti
             Accept: application/vnd.collection+json
 
 + Parameters
-    + start_date (optional, date) ... Filter by starting date (`2015-08-05T08:40:51.620Z`)
+    + event_id (optional, string) ... Filter by given event id
+    + start_date (optional, date) ... Filter by starting date ('2015-08-05T08:40:51.620Z')
     + end_date (optional, date) ... Filter by final date
     + page (optional, number) ... Paginate response to the given page number
 
@@ -76,9 +91,9 @@ Collection of sales, where each sale can have got several different products (ti
             "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/sales",
             "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
-            "channel_id": "int_channel@oneboxtm.com",
             "parameters":
             {
+              "event_id": "",
               "start_date": "",
               "end_date": "",
               "page": 2
@@ -86,22 +101,17 @@ Collection of sales, where each sale can have got several different products (ti
             "sales": [
               {
                 "id": "JFSKF34K2K4",
-                "transactin_date": "2015-08-05T08:40:51.620Z",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "event_name": "Campeonato liga LFP 15-16",
+                "transaction_date": "2015-08-05T08:40:51.620Z",
                 "transaction_type": "SALE",
                 "buyer_type_code": "INTEGRATION",
                 "products_number": 2,
-                "channel":
-                {
-                  "channel_id": "int_channel@oneboxtm.com",
-                  "city": "Barcelona",
-                  "zipCode": "08003"
-                },
+                "channel_id": "int_channel@oneboxtm.com",
                 "products": [
                   {
                       "id": "432k23",
-                      "event_id": "432",
-                      "event_date": "2015-08-05",
-                      "event_name": "Campeonato liga LFP 15-16"
                       "session_id": "12",
                       "session_date": "2015-08-05T08:40:51.620Z",
                       "session_name": "Liga Barcelona - Madrid",
@@ -116,9 +126,6 @@ Collection of sales, where each sale can have got several different products (ti
                   },
                   {
                       "id": "432k24",
-                      "event_id": "432",
-                      "event_date": "2015-08-05",
-                      "event_name": "Campeonato liga LFP 15-16"
                       "session_id": "12",
                       "session_date": "2015-08-05T08:40:51.620Z",
                       "session_name": "Liga Barcelona - Madrid",
@@ -131,6 +138,15 @@ Collection of sales, where each sale can have got several different products (ti
                       "seat": "10",
                       "row": "7"
                   }
+                ],
+                "links":[
+                  {
+                    "name": "summary",
+                    "prompt": "Summary",
+                    "rel": "summary",
+                    "href": "summaries?event_id=432",
+                    "render": "link"
+                  }
                 ]
               }
             ],
@@ -139,20 +155,22 @@ Collection of sales, where each sale can have got several different products (ti
                 "name": "next_page",
                 "prompt": "Next",
                 "rel": "next",
-                "href": "sales/page/3",
+                "href": "sales?page=3",
                 "render": "link"
               },
               {
                 "name": "previous_page",
                 "prompt": "Back",
                 "rel": "back",
-                "href": "sales/page/1",
+                "href": "sales?page=1",
                 "render": "link"
               }
             ]
 
           }
         }
+
++ Response 204 (application/json)
 
 + Response 400 (application/json)
 
@@ -204,7 +222,6 @@ See below the description of the response fields we consider that need to be exp
             "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/prices",
             "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
-            "channel_id": "int_channel@oneboxtm.com",
             "parameters":
             {
               "id": "",
@@ -217,6 +234,7 @@ See below the description of the response fields we consider that need to be exp
                 "id": "44",
                 "price": 23.3,
                 "price_zone_id": "454",
+                "price_zone_name": "Main grandstand low",
                 "event_id": "432",
                 "event_date": "2015-08-05",
                 "session_id": "12",
@@ -232,6 +250,7 @@ See below the description of the response fields we consider that need to be exp
                 "id": "322",
                 "price": 50.0,
                 "price_zone_id": "455",
+                "price_zone_name": "Main grandstand upper",
                 "event_id": "432",
                 "event_date": "2015-08-05",
                 "session_id": "12",
@@ -249,20 +268,22 @@ See below the description of the response fields we consider that need to be exp
                 "name": "next_page",
                 "prompt": "Next",
                 "rel": "next",
-                "href": "prices/page/3",
+                "href": "prices?page=3",
                 "render": "link"
               },
               {
                 "name": "previous_page",
                 "prompt": "Back",
                 "rel": "back",
-                "href": "prices/page/1",
+                "href": "prices?page=1",
                 "render": "link"
               }
             ]
 
           }
         }
+
++ Response 204 (application/json)
 
 + Response 400 (application/json)
 
@@ -280,15 +301,6 @@ See below the description of the response fields we consider that need to be exp
 
 ## Price Operations [/dynamic-pricing-api/1.0/prices/{id}]
 Modification (PUT) and partial modification  (PATCH) are both of them allowed. Notice that PUT is the correct and safe way to perform the modification as PATCH is neither safe nor idempotent.
-
-See below the description of the response fields we consider that need to be explained:
-
-| Response Field                   | Description                             |
-|----------------------------------|-----------------------------------------|
-| version                          | (Text) Version of the API               |
-| href                             | (Text) Url of the API doc               |
-| trace_id                         | (Text) unique identifier of the request |
-| parameters                       | (Object) Request filtering used         |
 
 ### Partial modification of a Price [PATCH]
 
@@ -401,3 +413,89 @@ See below the description of the response fields we consider that need to be exp
             "error": "unauthorized",
             "error_description": "Full authentication is required to access this resource"
           }
+
+## Summaries Collection [/dynamic-pricing-api/1.0/summaries{?event_id}]
+List the summarization data from a given event.
+
+See below the description of the response fields we consider that need to be explained:
+
+| Response Field                   | Description                             |
+|----------------------------------|-----------------------------------------|
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
+
+### List All Summaries [GET]
+
++ Request
+
+  + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
++ Parameters
+    + event_id (required, string) ... Filter by given event id.
+
++ Response 200 (application/json)
+
+         {
+          "collection":
+          {
+            "version": "1.0",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/summaries?event_id=23",
+            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
+            "request_date": "2015-08-05T08:40:51.620Z",
+            "parameters":
+            {
+              "event_id": 2
+            },
+            "summaries": [
+              {
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "event_name": "Campeonato liga LFP 15-16",
+                "session_id": "12",
+                "venue_id": "2",
+                "venue_name": "Camp Nou",
+                "total_sold_tickets": 2340,
+                "total_onsale_tickets": 3000,
+                "available_onesale_tickets": 660,
+                "prices_zones":[
+                  {
+                    "id": "454",
+                    "name": "Main grandstand low",
+                    "total_sold_tickets": 40,
+                    "total_onsale_tickets": 100,
+                    "available_onesale_tickets": 60
+                  },
+                  {
+                    "id": "455",
+                    "name": "Main grandstand high",
+                    "total_sold_tickets": 40,
+                    "total_onsale_tickets": 100,
+                    "available_onesale_tickets": 60
+                  }
+                ]
+              }
+            ],
+            "links": []
+          }
+        }
+
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+         {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+         }
+
++ Response 401 (application/json)
+
+         {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+         }
