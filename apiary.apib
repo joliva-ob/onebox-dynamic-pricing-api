@@ -1,45 +1,86 @@
 FORMAT: 1A
-HOST: http://developer.oneboxtickets.com/venueconfig-api/index.html
+HOST: http://developer.oneboxtickets.com/dynamic-pricing-api/index.html
 
-# onebox-venueconfig-api
+# onebox-dynamic-pricing-api
 
- API to get all the venue configurations from any external ticketing system.
+API to share CRM data to our integrated clients.
 
- To do so, we have used a **API Blueprint** standard, **apiary** as an online editing and mocking tool, **aglio** to document it, **getsandbox** as a sandbox provider, **atom** as local editor and **mockapi** as a local sandbox.
- + [API Blueprint](https://apiblueprint.org/)
- + [apiary.io](http://docs.oneboxvenueconfigapi.apiary.io/)
- + [getsandbox.com](http://onebox-venueconfig-api.getsandbox.com/)
- + [aglio](https://github.com/danielgtaylor/aglio)
- + [atom](http://atom.io)
- + [mockapi](https://github.com/joliva-ob/mockapi)
- + [github](https://github.com/joliva-ob/onebox-venueconfig-api)
- + [onebox-developer](http://developer.oneboxtickets.com/venueconfig-api/)
+To do so, we have used a **API Blueprint** standard, **apiary** as an online editing and mocking tool, **aglio** to document it and **getsandbox** as a sandbox provider:
++ [API Blueprint](https://apiblueprint.org/)
++ [apiary.io](http://docs.oneboxdynamicpricingapi.apiary.io/)
++ [getsandbox.com](http://onebox-dynamic-pricing-api.getsandbox.com/)
++ [aglio](https://github.com/danielgtaylor/aglio)
++ [github](https://github.com/joliva-ob/onebox-dynamic-pricing-api)
++ [onebox-developer](http://developer.oneboxtickets.com/dynamic-pricing-api/)
 
-## Venues Collection [/venueconfig-api/1.0/venues{?id,page}]
+## OAuth2 Requests [/oauth/token]
 
-List all the venues with its key data and the activities allowed for each one. It is also allowed to filtering by Id and paging.
-The following table contains the Spanish Soccer compatibility response fields descriptions:
+### Oauth2 Request Access Token [POST]
+
+You will need to use OAuth to access the API.  Write to us at api-support@oneboxtm.com.  We will give you a client ID and client secret. Use this as shown in the following call in order to retrieve a token.
+Once you have a token you can use it in all API calls as shown below.
+
++ Request (application/json)
+
+        {
+            "grant_type": "password",
+            "client_id": [CLIENT_ID],
+            "client_secret": [CLIENT_SECRET],
+            "password": [YOURPASSWORD],
+            "username": [YOURUSERNAME]
+        }
+
++ Response 201
+
+        {
+            "access_token": "[OAUTH2_TOKEN]",
+            "token_type":"bearer",
+            "expires_in":7200,
+            "refresh_token": "[REFRESH_TOKEN]"
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+## Sales Collection [/dynamic-pricing-api/1.0/sales{?event_id,start_date,end_date,page}]
+List all the key data from the sales. It is also allowed filtering between dates and paging.
+
+See below the description of the response fields we consider that need to be explained:
 
 | Response Field                   | Description                             |
 |----------------------------------|-----------------------------------------|
-| venue                            | Spanish: recinto club                   |
-| capacity                         | Spanish: aforo                          |
-| activities                       | Spanish: competición                    |
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
 
-+ Parameters
+### List All Sales [GET]
 
-    + id (optional, text) ... Filter by a given venue id.
-    + page (optional, number) ... Paginate response to the given page number
-
-
-### List All Venues [GET]
+Collection of sales, where each sale can have got several different products (ticket items).
 
 + Request
 
-    + Headers
+  + Headers
 
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
++ Parameters
+    + event_id (optional, string) ... Filter by given event id
+    + start_date (optional, date) ... Filter by starting date ('2015-08-05T08:40:51.620Z')
+    + end_date (optional, date) ... Filter by final date
+    + page (optional, number) ... Paginate response to the given page number
 
 + Response 200 (application/json)
 
@@ -47,206 +88,64 @@ The following table contains the Spanish Soccer compatibility response fields de
           "collection":
           {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/sales",
             "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
             "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 200,
-            "error_code": "",
-            "error_description": "",
             "parameters":
             {
+              "event_id": "",
+              "start_date": "",
+              "end_date": "",
               "page": 2
             },
-            "venues": [
+            "sales": [
               {
-                "id": "51",
-                "name": "Futbol Club Barcelona",
-                "ip": "10.234.22.5",
-                "port": 60000,
-                "capacities": [
+                "id": "JFSKF34K2K4",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "event_name": "Campeonato liga LFP 15-16",
+                "transaction_date": "2015-08-05T08:40:51.620Z",
+                "transaction_type": "SALE",
+                "buyer_type_code": "INTEGRATION",
+                "products_number": 2,
+                "channel_id": "int_channel@oneboxtm.com",
+                "products": [
                   {
-                    "id": "1",
-                    "name": "LIGA",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "LIGA"
-                      },
-                      {
-                        "id": "2",
-                        "name": "SUPERCOPA"
-                      },
-                      {
-                        "id": "3",
-                        "name": "CHAMPIONS"
-                      },
-                      {
-                        "id": "4",
-                        "name": "COPA DEL REY"
-                      }
-                    ]
+                      "id": "432k23",
+                      "session_id": "12",
+                      "session_date": "2015-08-05T08:40:51.620Z",
+                      "session_name": "Liga Barcelona - Madrid",
+                      "venue_id": "2",
+                      "venue_name": "Camp Nou",
+                      "price_id": "21",
+                      "price_zone_id": "454",
+                      "price": 23.3,
+                      "section": "tribuna alta B",
+                      "seat": "10",
+                      "row": "8"
                   },
                   {
-                    "id": "2",
-                    "name": "PARKING",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "PARKING"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "3",
-                    "name": "EUROPA",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "UEFA"
-                      },
-                      {
-                        "id": "2",
-                        "name": "CHAMPIONS"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "4",
-                    "name": "CONCIERTOS",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "UNICA"
-                      }
-                    ]
+                      "id": "432k24",
+                      "session_id": "12",
+                      "session_date": "2015-08-05T08:40:51.620Z",
+                      "session_name": "Liga Barcelona - Madrid",
+                      "venue_id": "2",
+                      "venue_name": "Camp Nou",
+                      "price_id": "22",
+                      "price_zone_id": "454",
+                      "price": 50.0,
+                      "section": "tribuna alta B",
+                      "seat": "10",
+                      "row": "7"
                   }
                 ],
-                "settings":
-                {
-                  "confirmation_release_time": 5,
-                  "cancellation_release_time": 60,
-                  "pre_order_trials_limit": 3,
-                  "second_market": false,
-                  "partners_selling": true,
-                  "max_tickets_order": 5,
-                  "allowed_seat_status": [
-                    {
-                      "id": "L"
-                    },
-                    {
-                      "id": "S"
-                    },
-                    {
-                      "id": "X"
-                    }
-                  ],
-                  "pending_booking_seat_status": "Z",
-                  "pending_booking_confirmation_allowed": false
-                },
-                "links" : [
+                "links":[
                   {
-                    "rel" : "events",
-                    "href" : "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/events",
-                    "prompt" : "Events"
-                  },
-                  {
-                    "rel" : "capacities",
-                    "href" : "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/capacities",
-                    "prompt" : "Capacities"
-                  }
-                ]
-              },
-              {
-                "id": "37",
-                "name": "Club Atlético de Madrid",
-                "ip": "10.234.22.1",
-                "port": 60000,
-                "capacities": [
-                  {
-                    "id": "1",
-                    "name": "LIGA",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "LIGA"
-                      },
-                      {
-                        "id": "2",
-                        "name": "SUPERCOPA"
-                      },
-                      {
-                        "id": "3",
-                        "name": "CHAMPIONS"
-                      },
-                      {
-                        "id": "4",
-                        "name": "COPA DEL REY"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "2",
-                    "name": "PARKING",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "PARKING"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "3",
-                    "name": "EUROPA",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "UEFA"
-                      },
-                      {
-                        "id": "2",
-                        "name": "CHAMPIONS"
-                      }
-                    ]
-                  },
-                  {
-                    "id": "4",
-                    "name": "CONCIERTOS",
-                    "activities": [
-                      {
-                        "id": "1",
-                        "name": "UNICA"
-                      }
-                    ]
-                  }
-                ],
-                "settings":
-                {
-                  "confirmation_release_time": 5,
-                  "cancellation_release_time": 60,
-                  "pre_order_trials_limit": 3,
-                  "second_market": false,
-                  "partner_selling": true,
-                  "max_tickets_order": 5,
-                  "allowed_seat_status": [
-                    {
-                      "id": "L"
-                    },
-                    {
-                      "id": "S"
-                    },
-                    {
-                      "id": "X"
-                    }
-                  ],
-                  "pending_booking_seat_status": "Z",
-                  "pending_booking_confirmation_allowed": false
-                },
-                "links" : [
-                  {
-                    "rel" : "events",
-                    "href" : "http://www.oneboxtm.com/venueconfig-api/1.0/venues/37/events/",
-                    "prompt" : "Events"
+                    "name": "summary",
+                    "prompt": "Summary",
+                    "rel": "summary",
+                    "href": "summaries?event_id=432",
+                    "render": "link"
                   }
                 ]
               }
@@ -256,14 +155,14 @@ The following table contains the Spanish Soccer compatibility response fields de
                 "name": "next_page",
                 "prompt": "Next",
                 "rel": "next",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/page/3",
+                "href": "sales?page=3",
                 "render": "link"
               },
               {
                 "name": "previous_page",
-                "prompt": "Bext",
+                "prompt": "Back",
                 "rel": "back",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/page/1",
+                "href": "sales?page=1",
                 "render": "link"
               }
             ]
@@ -271,1023 +170,332 @@ The following table contains the Spanish Soccer compatibility response fields de
           }
         }
 
++ Response 204 (application/json)
+
 + Response 400 (application/json)
 
         {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 400,
-            "error_code": "Bad Request",
-            "error_description": "There was a syntax error, check your params request and try it again."
-            "parameters":
-            {
-              "id": "",
-              "page": 1
-            }
-            "links": []
-          }
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
         }
 
 + Response 401 (application/json)
 
         {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 401,
-            "error_code": "Unauthorized",
-            "error_description": "Full authentication is required to access this resource"
-            "parameters":
-            {
-              "id": "",
-              "page": 1
-            }
-            "links": []
-          }
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
         }
 
-## Venue Resource Operations [/venueconfig-api/1.0/venues/{id}{?version,latest_from}]
+## Prices Collection [/dynamic-pricing-api/1.0/prices{?start_date,end_date,page}]
+List all the key data from the prices. It is also allowed to filtering between dates and paging and by a given price id.
 
-Retrieve a concrete resource representation of a venue specified by its *id*. For a concrete venue a specific version of the venue can be retrieved using the parameter `version`. If you do not know the version you have 2 possibilities:
- * Getting the latest version by not specifying `version` nor `latest_from`.
- * Specify the last valid version that you know as `latest_from` value. This will cause to get the latest version of the venue if there is one. In case that there is no newer version a `404` is returned.
+See below the description of the response fields we consider that need to be explained:
+
+| Response Field                   | Description                             |
+|----------------------------------|-----------------------------------------|
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
+
+### List All Prices [GET]
+
++ Request
+
+  + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
 
 + Parameters
 
-    + id (text) ... The venue identifier
-    + version (optional, number) ... Return a specific version of the venue. Mutualy exclusive with `latest_from`
-    + latest_from (optional, number) ... Given a version it returns the most recent venue's version grather than the provided version. Mutualy exclusive with `version`
-
-### Retieve a single venue resource [GET]
-
-+ Request  /venueconfig-api/1.0/venues/51
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
+    + start_date (optional, date) ... Filter by starting date (`2015-08-05T08:40:51.620Z`)
+    + end_date (optional, date) ... Filter by final date
+    + page (optional, number) ... Paginate response to the given page number
 
 + Response 200 (application/json)
 
         {
-            "collection":
+          "collection":
+          {
+            "version": "1.0",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/prices",
+            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
+            "request_date": "2015-08-05T08:40:51.620Z",
+            "parameters":
             {
-              "version": "1.0",
-              "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-              "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-              "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-              "request_date": "2015-08-05T08:40:51.620Z",
-              "http_status_code": 200,
-              "error_code": "",
-              "error_description": "",
-              "parameters":
+              "id": "",
+              "start_date": "",
+              "end_date": "",
+              "page": 2
+            },
+            "prices": [
               {
-                "id": "51"
+                "id": "44",
+                "price": 23.3,
+                "price_zone_id": "454",
+                "price_zone_name": "Main grandstand low",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "session_id": "12",
+                "session_date": "2015-08-05T08:40:51.620Z",
+                "venue_id": "2",
+                "venue_name": "FCB Camp Nou",
+                "buyer_type_code": "INTEGRATION",
+                "fee": 2.0,
+                "tax": 21.0,
+                "external_price_id": ""
               },
-              "venues": [
-                {
-                  "id": "51",
-                  "name": "Futbol Club Barcelona",
-                  "ip": "10.234.22.5",
-                  "port": 60000,
-                  "capacities": [
-                    {
-                      "id": "1",
-                      "name": "LIGA",
-                      "activities": [
-                        {
-                          "id": "1",
-                          "name": "LIGA"
-                        },
-                        {
-                          "id": "2",
-                          "name": "SUPERCOPA"
-                        },
-                        {
-                          "id": "3",
-                          "name": "CHAMPIONS"
-                        },
-                        {
-                          "id": "4",
-                          "name": "COPA DEL REY"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "2",
-                      "name": "PARKING",
-                      "activities": [
-                        {
-                          "id": "1",
-                          "name": "PARKING"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "3",
-                      "name": "EUROPA",
-                      "activities": [
-                        {
-                          "id": "1",
-                          "name": "UEFA"
-                        },
-                        {
-                          "id": "2",
-                          "name": "CHAMPIONS"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "4",
-                      "name": "CONCIERTOS",
-                      "activities": [
-                        {
-                          "id": "1",
-                          "name": "UNICA"
-                        }
-                      ]
-                    }
-                  ],
-                  "settings":
-                  {
-                    "confirmation_release_time": 5,
-                    "cancellation_release_time": 60,
-                    "pre_order_trials_limit": 3,
-                    "second_market": false,
-                    "partners_selling": true,
-                    "max_tickets_order": 5,
-                    "allowed_seat_status": [
-                      {
-                        "id": "L"
-                      },
-                      {
-                        "id": "S"
-                      },
-                      {
-                        "id": "X"
-                      }
-                    ],
-                    "pending_booking_seat_status": "Z",
-                    "pending_booking_confirmation_allowed": false
-                  },
-                  "links" : [
-                    {
-                      "rel" : "events",
-                      "href" : "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/events",
-                      "prompt" : "Events"
-                    },
-                    {
-                      "rel" : "capacities",
-                      "href" : "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/capacities",
-                      "prompt" : "Capacities"
-                    }
-                  ]
-                }
-              ],
-              "links": []
+              {
+                "id": "322",
+                "price": 50.0,
+                "price_zone_id": "455",
+                "price_zone_name": "Main grandstand upper",
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "session_id": "12",
+                "session_date": "2015-08-05T08:40:51.620Z",
+                "venue_name": "FCB Camp Nou",
+                "venue_id": "2",
+                "buyer_type_code": "INTEGRATION",
+                "fee": 2.0,
+                "tax": 21.0,
+                "external_price_id": ""
+              }
+            ],
+            "links": [
+              {
+                "name": "next_page",
+                "prompt": "Next",
+                "rel": "next",
+                "href": "prices?page=3",
+                "render": "link"
+              },
+              {
+                "name": "previous_page",
+                "prompt": "Back",
+                "rel": "back",
+                "href": "prices?page=1",
+                "render": "link"
+              }
+            ]
 
-            }
+          }
         }
 
 + Response 204 (application/json)
 
-+ Request /venueconfig-api/1.0/venues/astringid
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
 + Response 400 (application/json)
 
         {
-            "collection":
-            {
-                "version": "1.0",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-                "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-                "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-                "request_date": "2015-08-05T08:40:51.620Z",
-                "http_status_code": 400,
-                "error_code": "Bad Request",
-                "error_description": "There was a syntax error, check your params request and try it again."
-                "parameters":
-                {
-                    "id": "astringid"
-                }
-                "links": []
-            }
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
         }
-
-+ Request /venueconfig-api/1.0/venues/1?version=12&latest_from=45
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
-+ Response 400 (application/json)
-
-        {
-            "collection":
-            {
-                "version": "1.0",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-                "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-                "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-                "request_date": "2015-08-05T08:40:51.620Z",
-                "http_status_code": 400,
-                "error_code": "Bad Request",
-                "error_description": "version and lastFrom can not be specified at the same time, only one of them can be specified"
-                "parameters":
-                {
-                    "id": "1",
-                    "version": 12,
-                    "latest_from": 45
-                }
-                "links": []
-            }
-        }
-
-+ Request /venueconfig-api/1.0/venues/1
-
-    + Headers
-
-            Accept: application/json
 
 + Response 401 (application/json)
 
         {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 401,
-            "error_code": "Unauthorized",
-            "error_description": "Full authentication is required to access this resource"
-            "parameters":
-            {
-              "id": "2"
-            }
-            "links": []
-          }
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
         }
 
-## Venue events Collection [/venueconfig-api/1.0/venues/{venue_id}/events{?id,page}]
+## Price Operations [/dynamic-pricing-api/1.0/prices/{id}]
+Modification (PUT) and partial modification  (PATCH) are both of them allowed. Notice that PUT is the correct and safe way to perform the modification as PATCH is neither safe nor idempotent.
 
-List all the events from a given venue with its key data. It is also allowed to filtering by Id and paging.
-The following table contains the Spanish Soccer compatibility response fields descriptions:
+### Partial modification of a Price [PATCH]
+
++ Parameters
+
+    + id (required, string) ... Update a given price id
+
++ Request
+
+      + Headers
+
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
+
+      + Body
+
+            {
+              "id": "44",
+              "price": 23.3
+            }
+
++ Response 200 (application/json)
+
+        {
+          "id": "44",
+          "price": 23.3,
+          "price_zone_id": "454",
+          "event_id": "432",
+          "event_date": "2015-08-05",
+          "session_id": "12",
+          "session_date": "2015-08-05T08:40:51.620Z",
+          "venue_id": "2",
+          "buyer_type_code": "INTEGRATION",
+          "fee": 2.0,
+          "tax": 21.0,
+          "external_price_id": ""
+        }
+
++ Response 400 (application/json)
+
+        {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
+        }
+
++ Response 401 (application/json)
+
+        {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
+        }
+
+### Upate the whole Price [PUT]
+
++ Parameters
+
+    + id (required, string) ... Update a given price id
+
++ Request
+
+      + Headers
+
+                Authorization: Bearer [OAUTH2_TOKEN]
+                Accept: application/vnd.collection+json
+
+      + Body
+
+            {
+              "id": "44",
+              "price": 23.3,
+              "price_zone_id": "454",
+              "event_id": "432",
+              "event_date": "2015-08-05",
+              "session_id": "12",
+              "session_date": "2015-08-05T08:40:51.620Z",
+              "venue_id": "2",
+              "buyer_type_code": "INTEGRATION",
+              "fee": 2.0,
+              "tax": 21.0,
+              "external_price_id": ""
+            }
+
++ Response 200 (application/json)
+
+          {
+            "id": "44",
+            "price": 23.3,
+            "price_zone_id": "454",
+            "event_id": "432",
+            "event_date": "2015-08-05",
+            "session_id": "12",
+            "session_date": "2015-08-05T08:40:51.620Z",
+            "venue_id": "2",
+            "buyer_type_code": "INTEGRATION",
+            "fee": 2.0,
+            "tax": 21.0,
+            "external_price_id": ""
+          }
+
++ Response 400 (application/json)
+
+          {
+            "error": "Bad request",
+            "error_description": "There was a syntax error, check your params request and try it again."
+          }
+
++ Response 401 (application/json)
+
+          {
+            "error": "unauthorized",
+            "error_description": "Full authentication is required to access this resource"
+          }
+
+## Summaries Collection [/dynamic-pricing-api/1.0/summaries{?event_id}]
+List the summarization data from a given event.
+
+See below the description of the response fields we consider that need to be explained:
 
 | Response Field                   | Description                             |
 |----------------------------------|-----------------------------------------|
-| supporter                        | Spanish: simpatizante                   |
-| subscriber                       | Spanish: abonado                        |
-| partner                          | Spanish: socio                          |
-| suporter_companion               | Spanish: acompañantes simpatizantes     |
+| version                          | (Text) Version of the API               |
+| href                             | (Text) Url of the API doc               |
+| trace_id                         | (Text) unique identifier of the request |
+| parameters                       | (Object) Request filtering used         |
 
-+ Parameters
-    + venue_id (required, text) ... Identifies a specific venue.
-    + id (optional, text) ... Filter by a given event.
-    + page (optional, number) ... Paginate response to the given page number.
-
-### List All Venue Events [GET]
+### List All Summaries [GET]
 
 + Request
 
-    + Headers
+  + Headers
 
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
+            Authorization: Bearer [OAUTH2_TOKEN]
+            Accept: application/vnd.collection+json
 
-
++ Parameters
+    + event_id (required, string) ... Filter by given event id.
 
 + Response 200 (application/json)
 
-        {
+         {
           "collection":
           {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/events",
+            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/summaries?event_id=23",
             "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
             "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 200,
-            "error_code": "",
-            "error_description": "",
             "parameters":
             {
-              "venue_id": "51",
-              "page": 2
+              "event_id": 2
             },
-            "events": [
+            "summaries": [
               {
-                "id": "125",
-                "name": "Partido de prueba",
-                "update_date" : "2015-11-12T17:54:00+01:00"
-                "capacity_id": "1",
-                "activity_id": "2",
-                "round": "10",
-                "date": "2015-10-30T17:00:00+01:00",
-                "final_date": true,
-                "season": "14-15",
-                "zone_selling": true,
-                "second_market": true,
-                "package_selling": false,
-                "partner_selling": true,
-                "fun_selling": false,
-                "released_seats_selling": true,
-                "early_released_seats_selling": true,
-                "available": true,
-                "general_admission_start_date": "2015-10-30T17:00:00+01:00",
-                "general_admission_end_date": "2015-10-30T17:00:00+01:00",
-                "general_admission_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                "general_admission_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                "supporter_start_date": "2015-10-30T17:00:00+01:00",
-                "supporter_end_date": "2015-10-30T17:00:00+01:00",
-                "supporter_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                "supporter_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                "subscriber_start_date": "2015-10-30T17:00:00+01:00",
-                "subscriber_end_date": "2015-10-30T17:00:00+01:00",
-                "subscriber_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                "subscriber_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                "partner_start_date": "2015-10-30T17:00:00+01:00",
-                "partner_end_date": "2015-10-30T17:00:00+01:00",
-                "partner_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                "partner_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                "general_admission_tickets_limit": 1,
-                "preferred_tickets_limit": 1,
-                "supporter_companion_tickets_limit": 2,
-                "supporter_tickets_limit:" 3,
-                "parent_zones": [
+                "event_id": "432",
+                "event_date": "2015-08-05",
+                "event_name": "Campeonato liga LFP 15-16",
+                "session_id": "12",
+                "venue_id": "2",
+                "venue_name": "Camp Nou",
+                "total_sold_tickets": 2340,
+                "total_onsale_tickets": 3000,
+                "available_onesale_tickets": 660,
+                "prices_zones":[
                   {
-                    "id": "1",
-                    "name": "GRADA PREFERENCIAL",
-                    "update_date": "2015-10-30T17:00:00+01:00",
-                    "zones": [
-                        {
-                          "id": "126",
-                          "name": "GRADA PREFERENCIA BAJA",
-                          "gates": "13"
-                        },
-                        {
-                          "id": "127",
-                          "name": "GRADA PREFERENCIA ALTA",
-                          "gates": "13-54"
-                        }
-                      ],
-                      "prices": [
-                        {
-                          "id": "50",
-                          "name": "Grada PREF BAJA",
-                          "price": 60,00
-                        }
-                      ]
+                    "id": "454",
+                    "name": "Main grandstand low",
+                    "total_sold_tickets": 40,
+                    "total_onsale_tickets": 100,
+                    "available_onesale_tickets": 60
                   },
                   {
-                    "id": "2",
-                    "name": "GRADA VIP",
-                    "update_date": "2015-10-30T17:00:00+01:00",
-                    "zones": [
-                        {
-                          "id": "12",
-                          "name": "GRADA VIP BAJA",
-                          "gates": "1"
-                        },
-                        {
-                          "id": "13",
-                          "name": "GRADA VIP ALTA",
-                          "gates": "23"
-                        }
-                      ],
-                      "prices": [
-                        {
-                          "id": "50",
-                          "name": "Grada PREF BAJA",
-                          "price": 60,00
-                        }
-                      ]
+                    "id": "455",
+                    "name": "Main grandstand high",
+                    "total_sold_tickets": 40,
+                    "total_onsale_tickets": 100,
+                    "available_onesale_tickets": 60
                   }
                 ]
               }
-          ],
+            ],
+            "links": []
+          }
+        }
 
-          "links": [
-            {
-              "name": "next_page",
-              "prompt": "Next",
-              "rel": "next",
-              "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events/?page=3",
-              "render": "link"
-            },
-            {
-              "name": "previous_page",
-              "prompt": "Bext",
-              "rel": "back",
-              "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events/?page=1",
-              "render": "link"
-            }
-          ]
++ Response 204 (application/json)
+
++ Response 400 (application/json)
+
+         {
+          "error": "Bad request",
+          "error_description": "There was a syntax error, check your params request and try it again."
          }
-        }
-
-+ Response 400 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 400,
-            "error_code": "Bad Request",
-            "error_description": "There was a syntax error, check your params request and try it again."
-            "parameters":
-            {
-              "venue_id": "adsf"
-            },
-            "links": []
-          }
-        }
-
-+ Request /venueconfig-api/1.0/venues/125/events
-
-    + Headers
-
-            Accept: application/json
 
 + Response 401 (application/json)
 
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 401,
-            "error_code": "Unauthorized",
-            "error_description": "Full authentication is required to access this resource"
-            "parameters":
-            {
-              "venue_id": "",
-              "id": "",
-              "page": 1
-            },
-            "venues": [],
-            "links": []
-          }
-        }
-
-## Venue events Resource Operations [/venueconfig-api/1.0/venues/{venue_id}/events/{id}{?version,latest_from}]
-
-Retrieve a concrete resource representation of a venue's event specified by its *id*. For a concrete event a specific version of the event can be retrieved using the parameter `version`. If you do not know the version you have 2 possibilities:
- * Getting the latest version by not specifying `version` nor `latest_from`.
- * Specify the last valid version that you know as `latest_from` value. This will cause to get the latest version of the venue if there is one. In case that there is no newer version a `404` is returned.
-
-+ Parameters
-    + venue_id (required, text) ... Identifies a specific venue.
-    + id (text) ... The event identifier
-    + version (optional, number) ... Return a specific version of the event. Mutualy exclusive with `latest_from`
-    + latest_from (optional, number) ... Given a version it returns the most recent event's version grather than the provided version. Mutualy exclusive with `version`
-
-### Retieve a single venue's event resource [GET]
-+ Request /venueconfig-api/1.0/venues/51/events/125
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
-+ Response 200 (application/json)
-
-        {
-            "collection":
-            {
-                "version": "1.0",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/51/events/125",
-                "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-                "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-                "request_date": "2015-08-05T08:40:51.620Z",
-                "http_status_code": 200,
-                "error_code": "",
-                "error_description": "",
-                "parameters":
-                {
-                 "venue_id": "51",
-                 "id": "125"
-                },
-                "events": [
-                 {
-                   "id": "125",
-                   "name": "Partido de prueba",
-                   "update_date" : "2015-11-12T17:54:00+01:00"
-                   "capacity_id": "1",
-                   "activity_id": "2",
-                   "round": "10",
-                   "date": "2015-10-30T17:00:00+01:00",
-                   "final_date": true,
-                   "season": "14-15",
-                   "zone_selling": true,
-                   "second_market": true,
-                   "package_selling": false,
-                   "partner_selling": true,
-                   "fun_selling": false,
-                   "released_seats_selling": true,
-                   "early_released_seats_selling": true,
-                   "available": true,
-                   "general_admission_start_date": "2015-10-30T17:00:00+01:00",
-                   "general_admission_end_date": "2015-10-30T17:00:00+01:00",
-                   "general_admission_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                   "general_admission_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                   "supporter_start_date": "2015-10-30T17:00:00+01:00",
-                   "supporter_end_date": "2015-10-30T17:00:00+01:00",
-                   "supporter_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                   "supporter_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                   "subscriber_start_date": "2015-10-30T17:00:00+01:00",
-                   "subscriber_end_date": "2015-10-30T17:00:00+01:00",
-                   "subscriber_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                   "subscriber_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                   "partner_start_date": "2015-10-30T17:00:00+01:00",
-                   "partner_end_date": "2015-10-30T17:00:00+01:00",
-                   "partner_no_print_start_date": "2015-10-30T17:00:00+01:00",
-                   "partner_no_print_end_date": "2015-10-30T17:00:00+01:00",
-                   "general_admission_tickets_limit": 1,
-                   "preferred_tickets_limit": 1,
-                   "supporter_companion_tickets_limit": 2,
-                   "supporter_tickets_limit:" 3,
-                   "parent_zones": [
-                     {
-                       "id": "1",
-                       "name": "GRADA PREFERENCIAL",
-                       "update_date": "2015-10-30T17:00:00+01:00",
-                       "zones": [
-                           {
-                             "id": "126",
-                             "name": "GRADA PREFERENCIA BAJA",
-                             "gates": "13"
-                           },
-                           {
-                             "id": "127",
-                             "name": "GRADA PREFERENCIA ALTA",
-                             "gates": "13-54"
-                           }
-                         ],
-                         "prices": [
-                           {
-                             "id": "50",
-                             "name": "Grada PREF BAJA",
-                             "price": 60,00
-                           }
-                         ]
-                     },
-                     {
-                       "id": "2",
-                       "name": "GRADA VIP",
-                       "update_date": "2015-10-30T17:00:00+01:00",
-                       "zones": [
-                           {
-                             "id": "12",
-                             "name": "GRADA VIP BAJA",
-                             "gates": "1"
-                           },
-                           {
-                             "id": "13",
-                             "name": "GRADA VIP ALTA",
-                             "gates": "23"
-                           }
-                         ],
-                         "prices": [
-                           {
-                             "id": "50",
-                             "name": "Grada PREF BAJA",
-                             "price": 60,00
-                           }
-                         ]
-                     }
-                   ]
-                 }
-                ],
-                "links": []
-            }
-        }
-
-+ Request http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events/asdfa
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-+ Response 400 (application/json)
-
-        {
-            "collection":
-            {
-               "version": "1.0",
-               "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events/asdfa",
-               "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-               "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-               "request_date": "2015-08-05T08:40:51.620Z",
-               "http_status_code": 400,
-               "error_code": "Bad Request",
-               "error_description": "There was a syntax error, check your params request and try it again."
-               "parameters":
-               {
-                 "venue_id": "adsf"
-               },
-               "links": []
-            }
-        }
-
-
-+ Request /venueconfig-api/1.0/venues/125/events/12
-    + Headers
-
-            Accept: application/json
-+ Response 401 (application/json)
-
-        {
-            "collection":
-                {
-                "version": "1.0",
-                "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/events/12",
-                "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-                "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-                "request_date": "2015-08-05T08:40:51.620Z",
-                "http_status_code": 401,
-                "error_code": "Unauthorized",
-                "error_description": "Full authentication is required to access this resource"
-                "parameters":
-                {
-                 "venue_id": "",
-                 "id": "",
-                 "page": 1
-                },
-                "venues": [],
-                "links": []
-            }
-        }
-
-## Venue seating capacity details Collection [/venueconfig-api/1.0/venues/{venue_id}/capacities{?id,page}]
-List all the seating capacities from a given venue with its key data. It is also allowed to filtering by Id and paging.
-The following table contains the Spanish Soccer compatibility response fields descriptions:
-
-| Response Field                   | Description                             |
-|----------------------------------|-----------------------------------------|
-| entrance                         | Spanish: boca                           |
-| gate                             | Spanish: puerta                         |
-| block                            | Spanish: escalera                       |
-| sector                           | Spanish: vomitorio                      |
-
-+ Parameters
-    + venue_id (required, text) ... Identifies a specific venue.
-    + id (optional, text) ... Filter by a given seating capacity.
-    + page (optional, number) ... Paginate response to the given page number.
-
-### List All Seating Capacities of a given Venue/Event [GET]
-
-+ Request
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
-+ Response 200 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 200,
-            "error_code": "",
-            "error_description": "",
-            "parameters":
-            {
-              "venue_id": "125",
-              "id": "1",
-              "page": 2
-            },
-            "capacities": [
-              {
-                "id": "1",
-                "name": "LIGA",
-                "creation_date": "",
-                "update_date": "2014-07-30T14:39:33.48+02:00",
-                "zones": [
-                  {
-                    "id": "1",
-                    "name": "GRADA PREFERENCIAL",
-                    "gates": "54",
-                    "seats": [
-                        {
-                          "id": "126",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        },
-                        {
-                          "id": "127",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        }
-                    ]
-                  },
-                  {
-                    "id": "2",
-                    "name": "GRADA VIP",
-                    "creation_date": "",
-                    "update_date": "2014-07-30T14:39:33.48+02:00",
-                    "gates": "2",
-                    "seats": [
-                        {
-                          "id": "128",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "A",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        },
-                        {
-                          "id": "129",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "A",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        }
-                    ]
-                  }
-                ]
-              }
-          ],
-          "links": [
-            {
-              "name": "next_page",
-              "prompt": "Next",
-              "rel": "next",
-              "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities?page=3",
-              "render": "link"
-            },
-            {
-              "name": "previous_page",
-              "prompt": "Bext",
-              "rel": "back",
-              "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities?page=1",
-              "render": "link"
-            }
-          ]
+         {
+          "error": "unauthorized",
+          "error_description": "Full authentication is required to access this resource"
          }
-        }
-
-+ Request /venueconfig-api/1.0/venues/asdf/capacities
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
-+ Response 400 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/asdf/capacities",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 400,
-            "error_code": "Bad Request",
-            "error_description": "There was a syntax error, check your params request and try it again."
-            "parameters":
-            {
-              "venue_id": "asdf"
-            },
-            "links": []
-          }
-        }
-+ Request /venueconfig-api/1.0/venues/125/capacities
-    + Headers
-
-            Accept: application/json
-+ Response 401 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 401,
-            "error_code": "Unauthorized",
-            "error_description": "Full authentication is required to access this resource"
-            "parameters":
-            {
-              "venue_id": "125"
-            },
-            "links": []
-          }
-        }
-
-
-
-## Venue events Resource Operations [/venueconfig-api/1.0/venues/{venue_id}/capacities/{id}{?version,latest_from}]
-Retrieve a concrete resource representation of a venue's seating capacity specified by its *id*. For a concrete Venue seating capacity a specific version of the event can be retrieved using the parameter `version`. If you do not know the version you have 2 possibilities:
- * Getting the latest version by not specifying `version` nor `latest_from`.
- * Specify the last valid version that you know as `latest_from` value. This will cause to get the latest version of the venue's seating capacity if there is one. In case that there is no newer version a `404` is returned.
-
-+ Parameters
-    + venue_id (required, text) ... Identifies a specific venue.
-    + id (optional, text) ... Filter by a given seating capacity.
-    + version (optional, number) ... Return a specific version of the event. Mutualy exclusive with `latest_from`
-    + latest_from (optional, number) ... Given a version it returns the most recent event's version grather than the provided version. Mutualy exclusive with `version`
-
-### Retieve a single venue's Venue seating capacity resource [GET]
-
-+ Request
-
-    + Headers
-
-            Authorization: Bearer OAUTH2_TOKEN
-            Accept: application/json
-
-+ Response 200 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities/1",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 200,
-            "error_code": "",
-            "error_description": "",
-            "parameters":
-            {
-              "venue_id": "125",
-              "id": "1",
-            },
-            "capacities": [
-              {
-                "id": "1",
-                "name": "LIGA",
-                "creation_date": "",
-                "update_date": "2014-07-30T14:39:33.48+02:00",
-                "zones": [
-                  {
-                    "id": "1",
-                    "name": "GRADA PREFERENCIAL",
-                    "gates": "54",
-                    "seats": [
-                        {
-                          "id": "126",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        },
-                        {
-                          "id": "127",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        }
-                    ]
-                  },
-                  {
-                    "id": "2",
-                    "name": "GRADA VIP",
-                    "creation_date": "",
-                    "update_date": "2014-07-30T14:39:33.48+02:00",
-                    "gates": "2",
-                    "seats": [
-                        {
-                          "id": "128",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "A",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        },
-                        {
-                          "id": "129",
-                          "row": 20,
-                          "row_name": "20"
-                          "seat": 3,
-                          "seat_name": "3A",
-                          "entrance": "A",
-                          "gate": "1",
-                          "block": "1",
-                          "sector": ""
-                        }
-                    ]
-                  }
-                ]
-              }
-          ],
-          "links": []
-         }
-        }
-
-+ Request /venueconfig-api/1.0/venues/asdf/capacities
-    + Headers
-
-            Accept: application/json
-            Authorization: Bearer OAUTH2_TOKEN
-
-+ Response 400 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/asdf/capacities",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 400,
-            "error_code": "Bad Request",
-            "error_description": "There was a syntax error, check your params request and try it again."
-            "parameters":
-            {
-              "venue_id": "asdf"
-            },
-            "links": []
-          }
-        }
-+ Request /venueconfig-api/1.0/venues/125/capacities/1
-    + Headers
-
-            Accept: application/json
-
-+ Response 401 (application/json)
-
-        {
-          "collection":
-          {
-            "version": "1.0",
-            "href": "http://www.oneboxtm.com/venueconfig-api/1.0/venues/125/capacities",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
-            "span_id": "34abc26e-173a-4ab2-a71b-863aed20f622",
-            "request_date": "2015-08-05T08:40:51.620Z",
-            "http_status_code": 401,
-            "error_code": "Unauthorized",
-            "error_description": "Full authentication is required to access this resource"
-            "parameters":
-            {
-              "venue_id": "125",
-              "id": "1"
-            },
-            "links": []
-          }
-        }
