@@ -85,11 +85,7 @@ Collection of sales, where each sale can have got several different products (ti
 + Response 200 (application/json)
 
         {
-          "collection":
-          {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/sales/",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
@@ -166,8 +162,6 @@ Collection of sales, where each sale can have got several different products (ti
                 "render": "link"
               }
             ]
-
-          }
         }
 
 + Response 204 (application/json)
@@ -205,7 +199,7 @@ See below the description of the response fields we consider that need to be exp
   + Headers
 
             Authorization: Bearer [OAUTH2_TOKEN]
-            Accept: application/vnd.collection+json
+            Accept: application/json
 
 + Parameters
 
@@ -216,15 +210,10 @@ See below the description of the response fields we consider that need to be exp
 + Response 200 (application/json)
 
         {
-          "collection":
-          {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/prices",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
-              "id": "",
               "start_date": "",
               "end_date": "",
               "page": 2
@@ -279,8 +268,6 @@ See below the description of the response fields we consider that need to be exp
                 "render": "link"
               }
             ]
-
-          }
         }
 
 + Response 204 (application/json)
