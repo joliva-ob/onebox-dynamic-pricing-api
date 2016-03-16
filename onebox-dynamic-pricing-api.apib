@@ -3,7 +3,7 @@ HOST: http://onebox-api-url/1.0/dynamic-pricing-api
 
 # onebox-dynamic-pricing-api
 
-API to share sails and prices data in order to retrieve recommended prices in real time.
+API to share sales and prices data in order to retrieve recommended prices in real time.
 
 To do so, we have used a **API Blueprint** standard, **apiary** as an online editing and mocking tool, **aglio** to document it and **getsandbox** as a sandbox provider:
 + [API Blueprint](https://apiblueprint.org/)
@@ -98,7 +98,6 @@ Collection of sales, where each sale can have got several different products (ti
               {
                 "id": "JFSKF34K2K4",
                 "event_id": "432",
-                "event_date": "2015-08-05",
                 "event_name": "Campeonato liga LFP 15-16",
                 "transaction_date": "2015-08-05T08:40:51.620Z",
                 "transaction_type": "SALE",
@@ -428,11 +427,7 @@ See below the description of the response fields we consider that need to be exp
 + Response 200 (application/json)
 
          {
-          "collection":
-          {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/summaries?event_id=23",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
@@ -468,7 +463,6 @@ See below the description of the response fields we consider that need to be exp
               }
             ],
             "links": []
-          }
         }
 
 + Response 204 (application/json)
