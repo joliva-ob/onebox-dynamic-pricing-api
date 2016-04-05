@@ -99,7 +99,6 @@ Collection of sales, where each sale can have got several different products (ti
               {
                 "id": "JFSKF34K2K4",
                 "event_id": "432",
-                "event_date": "2015-08-05",
                 "event_name": "Campeonato liga LFP 15-16",
                 "transaction_date": "2015-08-05T08:40:51.620Z",
                 "transaction_type": "SALE",
@@ -116,6 +115,7 @@ Collection of sales, where each sale can have got several different products (ti
                       "venue_name": "Camp Nou",
                       "price_id": "21",
                       "price_zone_id": "454",
+                      "price_zone_name": "General Zone",
                       "price": 23.3,
                       "section": "tribuna alta B",
                       "seat": "10",
@@ -130,6 +130,7 @@ Collection of sales, where each sale can have got several different products (ti
                       "venue_name": "Camp Nou",
                       "price_id": "22",
                       "price_zone_id": "454",
+                      "price_zone_name": "General Zone",
                       "price": 50.0,
                       "section": "tribuna alta B",
                       "seat": "10",
@@ -430,11 +431,7 @@ See below the description of the response fields we consider that need to be exp
 + Response 200 (application/json)
 
          {
-          "collection":
-          {
             "version": "1.0",
-            "href": "http://www.oneboxtm.com/dynamic-pricing-api/1.0/summaries?event_id=23",
-            "trace_id": "94abc26e-173a-4ab2-a71b-863aed20f656",
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
@@ -470,7 +467,6 @@ See below the description of the response fields we consider that need to be exp
               }
             ],
             "links": []
-          }
         }
 
 + Response 204 (application/json)
