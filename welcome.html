@@ -67,8 +67,9 @@ Once you have a token you can use it in all API calls as shown below.</p>
 </tr>
 </tbody>
 </table>
-<div id="sales-collection-get" class="action get"><h4 class="action-heading"><div class="name">List All Sales</div><a href="#sales-collection-get" class="method get">GET</a><code class="uri">/dynamic-pricing-api/1.0/sales{?event_id,start_date,end_date,page}</code></h4><p>Collection of sales, where each sale can have got several different products (ticket items).</p>
-<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>event_id</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by given event id</p>
+<div id="sales-collection-get" class="action get"><h4 class="action-heading"><div class="name">List All Sales</div><a href="#sales-collection-get" class="method get">GET</a><code class="uri">/dynamic-pricing-api/1.0/sales{?sale_id,event_id,start_date,end_date,page}</code></h4><p>Collection of sales, where each sale can have got several different products (ticket items).</p>
+<div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>sale_id</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by given sale id</p>
+</dd><dt>event_id</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by given event id</p>
 </dd><dt>start_date</dt><dd><code>date</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by starting date (‘2015-08-05T08:40:51.620Z’)</p>
 </dd><dt>end_date</dt><dd><code>date</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by final date</p>
 </dd><dt>page</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<p>Paginate response to the given page number</p>
@@ -76,10 +77,11 @@ Once you have a token you can use it in all API calls as shown below.</p>
   "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
   "<span class="hljs-attribute">request_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-08-05T08:40:51.620Z"</span></span>,
   "<span class="hljs-attribute">parameters</span>": <span class="hljs-value">{
-    "<span class="hljs-attribute">event_id</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
+    "<span class="hljs-attribute">event_id</span>": <span class="hljs-value">-<span class="hljs-number">1</span></span>,
     "<span class="hljs-attribute">start_date</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
     "<span class="hljs-attribute">end_date</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
     "<span class="hljs-attribute">page</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+    "<span class="hljs-attribute">sale_id</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
     "<span class="hljs-attribute">trace_id</span>": <span class="hljs-value"><span class="hljs-string">"8adbf57d-ab42-48d9-bde2-575523546cf3"</span>
   </span>}</span>,
   "<span class="hljs-attribute">sales</span>": <span class="hljs-value">[
@@ -185,13 +187,17 @@ Once you have a token you can use it in all API calls as shown below.</p>
 </tr>
 </tbody>
 </table>
-<div id="prices-collection-get" class="action get"><h4 class="action-heading"><div class="name">List All Prices</div><a href="#prices-collection-get" class="method get">GET</a><code class="uri">/dynamic-pricing-api/1.0/prices{?start_date,end_date,page}</code></h4><div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>start_date</dt><dd><code>date</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by starting date (<code>2015-08-05T08:40:51.620Z</code>)</p>
+<div id="prices-collection-get" class="action get"><h4 class="action-heading"><div class="name">List All Prices</div><a href="#prices-collection-get" class="method get">GET</a><code class="uri">/dynamic-pricing-api/1.0/prices{?price_id,event_id,start_date,end_date,page}</code></h4><div class="title"><strong>Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>price_id</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by a given price id</p>
+</dd><dt>event_id</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by a given event id</p>
+</dd><dt>start_date</dt><dd><code>date</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by starting date (<code>2015-08-05T08:40:51.620Z</code>)</p>
 </dd><dt>end_date</dt><dd><code>date</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter by final date</p>
 </dd><dt>page</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<p>Paginate response to the given page number</p>
 </dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Authorization</span>: <span class="hljs-string">Bearer [OAUTH2_TOKEN]</span><br><span class="hljs-attribute">Accept</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">version</span>": <span class="hljs-value"><span class="hljs-string">"1.0"</span></span>,
   "<span class="hljs-attribute">request_date</span>": <span class="hljs-value"><span class="hljs-string">"2015-08-05T08:40:51.620Z"</span></span>,
   "<span class="hljs-attribute">parameters</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">price_id</span>": <span class="hljs-value">-<span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">event_id</span>": <span class="hljs-value">-<span class="hljs-number">1</span></span>,
     "<span class="hljs-attribute">start_date</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
     "<span class="hljs-attribute">end_date</span>": <span class="hljs-value"><span class="hljs-string">""</span></span>,
     "<span class="hljs-attribute">page</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
@@ -381,7 +387,7 @@ Once you have a token you can use it in all API calls as shown below.</p>
 </span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>401</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
   "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"unauthorized"</span></span>,
   "<span class="hljs-attribute">error_description</span>": <span class="hljs-value"><span class="hljs-string">"Full authentication is required to access this resource"</span>
-</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 05 Apr 2016</p><script>/* eslint-env browser */
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 30 Apr 2016</p><script>/* eslint-env browser */
 /* eslint quotes: [2, "single"] */
 'use strict';
 
