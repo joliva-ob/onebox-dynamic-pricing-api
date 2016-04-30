@@ -53,7 +53,7 @@ Once you have a token you can use it in all API calls as shown below.
           "error_description": "Full authentication is required to access this resource"
         }
 
-## Sales Collection [/dynamic-pricing-api/1.0/sales{?event_id,start_date,end_date,page}]
+## Sales Collection [/dynamic-pricing-api/1.0/sales{?sale_id,event_id,start_date,end_date,page}]
 List all the key data from the sales. It is also allowed filtering between dates and paging.
 
 See below the description of the response fields we consider that need to be explained:
@@ -77,7 +77,8 @@ Collection of sales, where each sale can have got several different products (ti
             Accept: application/json
 
 + Parameters
-    + event_id (optional, string) ... Filter by given event id
+    + sale_id (optional, string) ... Filter by given sale id
+    + event_id (optional, number) ... Filter by given event id
     + start_date (optional, date) ... Filter by starting date ('2015-08-05T08:40:51.620Z')
     + end_date (optional, date) ... Filter by final date
     + page (optional, number) ... Paginate response to the given page number
@@ -89,10 +90,11 @@ Collection of sales, where each sale can have got several different products (ti
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
-              "event_id": "",
+              "event_id": -1,
               "start_date": "",
               "end_date": "",
               "page": 2,
+              "sale_id": "",
               "trace_id": "8adbf57d-ab42-48d9-bde2-575523546cf3"
             },
             "sales": [
@@ -182,7 +184,7 @@ Collection of sales, where each sale can have got several different products (ti
           "error_description": "Full authentication is required to access this resource"
         }
 
-## Prices Collection [/dynamic-pricing-api/1.0/prices{?start_date,end_date,page}]
+## Prices Collection [/dynamic-pricing-api/1.0/prices{?price_id,event_id,start_date,end_date,page}]
 List all the key data from the prices. It is also allowed to filtering between dates and paging and by a given price id.
 
 See below the description of the response fields we consider that need to be explained:
@@ -205,6 +207,8 @@ See below the description of the response fields we consider that need to be exp
 
 + Parameters
 
+    + price_id (optional, number) ... Filter by a given price id
+    + event_id (optional, number) ... Filter by a given event id
     + start_date (optional, date) ... Filter by starting date (`2015-08-05T08:40:51.620Z`)
     + end_date (optional, date) ... Filter by final date
     + page (optional, number) ... Paginate response to the given page number
@@ -216,6 +220,8 @@ See below the description of the response fields we consider that need to be exp
             "request_date": "2015-08-05T08:40:51.620Z",
             "parameters":
             {
+              "price_id": -1,
+              "event_id": -1,
               "start_date": "",
               "end_date": "",
               "page": 2,
